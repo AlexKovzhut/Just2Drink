@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  DrinksTableViewController.swift
 //  Just2Drink
 //
 //  Created by Alexander Kovzhut on 08.01.2022.
@@ -7,18 +7,18 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-    
+class DrinksTableViewController: UIViewController {
+    // MARK: - Private methods
     private let tableView = UITableView()
     private let searchController = UISearchController(searchResultsController: nil)
 
     private var cocktailDB: CocktailDB?
     private var filteredDrink: [Drink] = []
-       private var searchBarIsEmpty: Bool {
+    private var searchBarIsEmpty: Bool {
            guard let text = searchController.searchBar.text else { return false }
            return text.isEmpty
        }
-       private var isFiltering: Bool {
+    private var isFiltering: Bool {
            return searchController.isActive && !searchBarIsEmpty
        }
 
@@ -32,22 +32,56 @@ class ViewController: UIViewController {
         setupLayout()
         fetchData()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print(#function)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print(#function)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print(#function)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print(#function)
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        print(#function)
+    }
+    
+    override func loadView() {
+        super.loadView()
+        print(#function)
+    }
 }
 
 // MARK: - Private Methods
-extension ViewController {
+extension DrinksTableViewController {
    private func setup() {
        tableView.dataSource = self
        tableView.delegate = self
    }
    
    private func setupNavigationBar() {
+       navigationItem.title = "Discover"
+       navigationController?.navigationBar.prefersLargeTitles = true
+       
+       navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshBarButtonTapped))
    }
    
    private func setupSearchController() {
        searchController.searchResultsUpdater = self
        navigationItem.searchController = searchController
-//       searchController.hidesNavigationBarDuringPresentation = true
+       searchController.hidesNavigationBarDuringPresentation = true
        searchController.obscuresBackgroundDuringPresentation = false
        searchController.searchBar.placeholder = "Find a cocktail..."
        searchController.searchBar.backgroundColor = .white
@@ -88,7 +122,7 @@ extension ViewController {
 
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
+extension DrinksTableViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return isFiltering ? filteredDrink.count : cocktailDB?.drinks.count ?? 0
     }
@@ -118,7 +152,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 // MARK: - UISearchResultsUpdating
-extension ViewController: UISearchResultsUpdating {
+extension DrinksTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         filterContentForSearchText(searchController.searchBar.text!)
     }
@@ -128,6 +162,13 @@ extension ViewController: UISearchResultsUpdating {
             chracter.strDrink.lowercased().contains(searchText.lowercased())
         } ?? []
         
+        tableView.reloadData()
+    }
+}
+
+    // MARK: - @objc methods
+extension DrinksTableViewController {
+    @objc func refreshBarButtonTapped() {
         tableView.reloadData()
     }
 }
